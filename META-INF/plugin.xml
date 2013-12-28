@@ -34,6 +34,10 @@
 
   <actions>
     <!-- Add your actions here -->
+      <action id="HelloAction" class="HelloAction" text="Say Hello">
+          <add-to-group group-id="ToolsMenu" anchor="first"/>
+          <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl meta 0"/>
+      </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
