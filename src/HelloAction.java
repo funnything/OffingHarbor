@@ -1,3 +1,6 @@
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 
@@ -6,6 +9,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
  */
 public class HelloAction extends AnAction {
     public void actionPerformed(AnActionEvent e) {
-        // TODO: insert action logic here
+        Notifications.Bus.notify(new Notification("sample", "Hello title!", "Hello, this is content!", NotificationType.INFORMATION));
     }
 }
