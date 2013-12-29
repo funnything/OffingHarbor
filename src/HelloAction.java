@@ -9,6 +9,18 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
  */
 public class HelloAction extends AnAction {
     public void actionPerformed(AnActionEvent e) {
-        Notifications.Bus.notify(new Notification("sample", "Hello title!", "Hello, this is content!", NotificationType.INFORMATION));
+        HelloPluginConfig config = HelloPluginConfig.getInstance(e.getProject());
+        assert config != null;
+
+        if (config.isEmpty()) {
+            config.init();
+        }
+
+        int count = config.getCount();
+
+        String content = String.format("Hello, this is %d content!", count);
+        Notifications.Bus.notify(new Notification("sample", "Hello title!", content, NotificationType.INFORMATION));
+
+        config.increment();
     }
 }
