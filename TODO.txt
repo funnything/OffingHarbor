@@ -1,12 +1,12 @@
 - 変換方法
-    - 現在開いている xml から変換
+    X 現在開いている xml から変換
     - Project Explorer でファイル右クリックから変換
     - 現在開いている java から変換
 - 変換後
-    - clipboard にコピー
+    X clipboard にコピー
     - 対応する java を更新
 - 変換時にプレフィックスを選べるように (m とか _ とか)
 - 変換フォーマット
     - AndroidAnnotations 向けの変換
-    - findViewById 向けの変換
-- 元 id 名に基いて変換先の型名を選択するオプション
+    X findViewById 向けの変換
+X 元 id 名に基いて変換先の型名を選択するオプション
