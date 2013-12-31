@@ -198,7 +198,16 @@ public class ConvertExecutor {
         for (AndroidViewInfo info : infos) {
             String type = config.useSmartType ? info.findOptimalType(viewNameTree) : info.type;
             String symbol = info.getJavaSymbolName(config);
-            fieldJavaCode.append(String.format("private %s %s;" + NL, type, symbol));
+
+            if (config.format == ConvertConfig.ConvertFormat.ANDROID_ANNOTATIONS) {
+                if (config.prefix.willModify()) {
+                    fieldJavaCode.append(String.format("@ViewById(R.id.%s)" + NL + "protected %s %s;" + NL, info.id, type, symbol));
+                } else {
+                    fieldJavaCode.append(String.format("@ViewById" + NL + "protected %s %s;" + NL, type, symbol));
+                }
+            } else {
+                fieldJavaCode.append(String.format("private %s %s;" + NL, type, symbol));
+            }
 
             if (type.equals("View")) {
                 methodJavaCode.append(String.format("    %s = findViewById(R.id.%s);" + NL, symbol, info.id));
@@ -209,7 +218,11 @@ public class ConvertExecutor {
 
         methodJavaCode.append("}" + NL);
 
-        return fieldJavaCode.toString() + NL + methodJavaCode.toString();
+        if (config.format == ConvertConfig.ConvertFormat.ANDROID_ANNOTATIONS) {
+            return fieldJavaCode.toString();
+        } else {
+            return fieldJavaCode.toString() + NL + methodJavaCode.toString();
+        }
     }
 
     private Tree prepareViewNames(Project project) {

@@ -6,8 +6,8 @@
     X clipboard にコピー
     - 対応する java を更新
 X 変換時にプレフィックスを選べるように (m とか _ とか)
-- 変換フォーマット
-    - AndroidAnnotations 向けの変換
+X 変換フォーマット
+    X AndroidAnnotations 向けの変換
     X findViewById 向けの変換
 X 元 id 名に基いて変換先の型名を選択するオプション
 X ダイアログを表示してオプションを選択できるように

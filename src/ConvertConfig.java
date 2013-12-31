@@ -1,6 +1,10 @@
 public class ConvertConfig {
     public enum ConvertPrefix {
-        NONE, MEMBER, UNDERSCORE
+        NONE, MEMBER, UNDERSCORE;
+
+        public boolean willModify() {
+            return this != NONE;
+        }
     }
 
     public enum ConvertFormat {
