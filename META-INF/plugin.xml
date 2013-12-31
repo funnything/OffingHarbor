@@ -34,10 +34,6 @@
 
     <actions>
         <!-- Add your actions here -->
-        <action class="HelloAction" id="HelloAction" text="Say Hello">
-            <add-to-group anchor="first" group-id="ToolsMenu"/>
-            <keyboard-shortcut first-keystroke="shift ctrl meta 0" keymap="$default"/>
-        </action>
         <action id="ConvertAction" class="ConvertAction" text="Convert Android layout xml"
                 description="Convert Android layout xml to Java code">
             <add-to-group group-id="ToolsMenu" anchor="after" relative-to-action="AndroidToolsGroup"/>
@@ -46,6 +42,6 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectService serviceImplementation="HelloPluginConfig" serviceInterface="HelloPluginConfig"/>
+        <projectService serviceImplementation="ConvertConfigRepository" serviceInterface="ConvertConfigRepository"/>
     </extensions>
 </idea-plugin>
