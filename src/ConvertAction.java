@@ -35,6 +35,105 @@ import java.util.List;
 public class ConvertAction extends AnAction {
     private static final boolean FIND_OPTIMAL_TYPE = true;
 
+    private static class AndroidViewInfo {
+        public String type;
+        public String id;
+
+        private AndroidViewInfo(String type, String id) {
+            this.type = type;
+            this.id = id;
+        }
+
+        public String getJavaSymbolName() {
+            return snakeCaseToCamelCase(id);
+        }
+
+        // 型名が一致する かつ this.type の親クラスであれば
+        public String findOptimalType(Tree viewNameTree) {
+            List<String> split = Arrays.asList(id.split("_"));
+
+            while (!split.isEmpty()) {
+                String candidate = capitalizeJoin(split);
+
+                if (traverseOptimalType(viewNameTree, candidate, type, false)) {
+                    debug(String.format("try %s for %s, match!", candidate, type));
+                    return candidate;
+                }
+                debug(String.format("try %s for %s, not match...", candidate, type));
+
+                split = split.subList(1, split.size());
+            }
+
+            return type;
+        }
+
+        private String capitalizeJoin(List<String> list) {
+            List<String> capitalized = Lists.newArrayList();
+
+            for (String s : list) {
+                capitalized.add(StringUtils.capitalize(s));
+            }
+
+            return StringUtils.join(capitalized, "");
+        }
+
+        private boolean traverseOptimalType(Tree viewNamesTree, String candidate, String origin, boolean searchForOrigin) {
+            if (searchForOrigin) {
+                if (viewNamesTree.name.equals(origin)) {
+                    return true;
+                }
+            } else {
+                if (viewNamesTree.name.equals(candidate)) {
+                    return traverseOptimalType(viewNamesTree, candidate, origin, true);
+                }
+            }
+
+            for (Tree child : viewNamesTree.children) {
+                if (traverseOptimalType(child, candidate, origin, searchForOrigin)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private String snakeCaseToCamelCase(String snakeCase) {
+            List<String> capitalized = Lists.newArrayList();
+
+            boolean isFirst = true;
+            for (String s : snakeCase.split("_")) {
+                if (isFirst) {
+                    capitalized.add(s);
+                } else {
+                    capitalized.add(StringUtils.capitalize(s));
+                }
+
+                isFirst = false;
+            }
+
+            return StringUtils.join(capitalized, "");
+        }
+
+        @Override
+        public String toString() {
+            return "AndroidViewInfo{" +
+                    "type='" + type + '\'' +
+                    ", id='" + id + '\'' +
+                    '}';
+        }
+    }
+
+    private static class Tree {
+        public String name;
+        public List<Tree> children; // Set is enough
+
+        private Tree(String name) {
+            this.name = name;
+            children = Lists.newArrayList();
+        }
+    }
+
+    @Deprecated
     private static void debug(Object obj) {
         Notifications.Bus.notify(new Notification("OffingHarbor", "OffingHarbor", obj != null ? obj.toString() : "(null)", NotificationType.INFORMATION));
     }
@@ -155,103 +254,5 @@ public class ConvertAction extends AnAction {
 
     private void showError(String content) {
         Notifications.Bus.notify(new Notification("OffingHarbor", "OffingHarbor", content, NotificationType.ERROR));
-    }
-
-    private static class AndroidViewInfo {
-        public String type;
-        public String id;
-
-        private AndroidViewInfo(String type, String id) {
-            this.type = type;
-            this.id = id;
-        }
-
-        public String getJavaSymbolName() {
-            return snakeCaseToCamelCase(id);
-        }
-
-        // 型名が一致する かつ this.type の親クラスであれば
-        public String findOptimalType(Tree viewNameTree) {
-            List<String> split = Arrays.asList(id.split("_"));
-
-            while (!split.isEmpty()) {
-                String candidate = capitalizeJoin(split);
-
-                if (traverseOptimalType(viewNameTree, candidate, type, false)) {
-                    debug(String.format("try %s for %s, match!", candidate, type));
-                    return candidate;
-                }
-                debug(String.format("try %s for %s, not match...", candidate, type));
-
-                split = split.subList(1, split.size());
-            }
-
-            return type;
-        }
-
-        private String capitalizeJoin(List<String> list) {
-            List<String> capitalized = Lists.newArrayList();
-
-            for (String s : list) {
-                capitalized.add(StringUtils.capitalize(s));
-            }
-
-            return StringUtils.join(capitalized, "");
-        }
-
-        private boolean traverseOptimalType(Tree viewNamesTree, String candidate, String origin, boolean searchForOrigin) {
-            if (searchForOrigin) {
-                if (viewNamesTree.name.equals(origin)) {
-                    return true;
-                }
-            } else {
-                if (viewNamesTree.name.equals(candidate)) {
-                    return traverseOptimalType(viewNamesTree, candidate, origin, true);
-                }
-            }
-
-            for (Tree child : viewNamesTree.children) {
-                if (traverseOptimalType(child, candidate, origin, searchForOrigin)) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private String snakeCaseToCamelCase(String snakeCase) {
-            List<String> capitalized = Lists.newArrayList();
-
-            boolean isFirst = true;
-            for (String s : snakeCase.split("_")) {
-                if (isFirst) {
-                    capitalized.add(s);
-                } else {
-                    capitalized.add(StringUtils.capitalize(s));
-                }
-
-                isFirst = false;
-            }
-
-            return StringUtils.join(capitalized, "");
-        }
-
-        @Override
-        public String toString() {
-            return "AndroidViewInfo{" +
-                    "type='" + type + '\'' +
-                    ", id='" + id + '\'' +
-                    '}';
-        }
-    }
-
-    private static class Tree {
-        public String name;
-        public List<Tree> children; // Set is enough
-
-        private Tree(String name) {
-            this.name = name;
-            children = Lists.newArrayList();
-        }
     }
 }

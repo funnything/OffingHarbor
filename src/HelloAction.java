@@ -22,5 +22,7 @@ public class HelloAction extends AnAction {
         Notifications.Bus.notify(new Notification("sample", "Hello title!", content, NotificationType.INFORMATION));
 
         config.increment();
+
+        new ConvertDialog(e.getProject()).show();
     }
 }
