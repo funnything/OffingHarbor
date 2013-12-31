@@ -38,8 +38,17 @@ public class ConvertExecutor {
             this.id = id;
         }
 
-        public String getJavaSymbolName() {
-            return snakeCaseToCamelCase(id);
+        public String getJavaSymbolName(ConvertConfig config) {
+            switch (config.prefix) {
+                case NONE:
+                    return snakeCaseToCamelCase(id);
+                case MEMBER:
+                    return snakeCaseToCamelCase("m_" + id);
+                case UNDERSCORE:
+                    return "_" + snakeCaseToCamelCase(id);
+                default:
+                    throw new IllegalStateException("assert");
+            }
         }
 
         // 型名が一致する かつ this.type の親クラスであれば
@@ -188,12 +197,13 @@ public class ConvertExecutor {
 
         for (AndroidViewInfo info : infos) {
             String type = config.useSmartType ? info.findOptimalType(viewNameTree) : info.type;
-            fieldJavaCode.append(String.format("private %s %s;" + NL, type, info.getJavaSymbolName()));
+            String symbol = info.getJavaSymbolName(config);
+            fieldJavaCode.append(String.format("private %s %s;" + NL, type, symbol));
 
             if (type.equals("View")) {
-                methodJavaCode.append(String.format("    %s = findViewById(R.id.%s);" + NL, info.getJavaSymbolName(), info.id));
+                methodJavaCode.append(String.format("    %s = findViewById(R.id.%s);" + NL, symbol, info.id));
             } else {
-                methodJavaCode.append(String.format("    %s = (%s) findViewById(R.id.%s);" + NL, info.getJavaSymbolName(), type, info.id));
+                methodJavaCode.append(String.format("    %s = (%s) findViewById(R.id.%s);" + NL, symbol, type, info.id));
             }
         }
 
