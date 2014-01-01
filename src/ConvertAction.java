@@ -3,9 +3,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.impl.EditorImpl;
-import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.vfs.VirtualFile;
 
 /**
@@ -13,16 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile;
  */
 public class ConvertAction extends AnAction {
     public void actionPerformed(AnActionEvent e) {
-        Editor editor = FileEditorManager.getInstance(e.getProject()).getSelectedTextEditor();
-        assert editor != null;
-
-        if (!(editor instanceof EditorImpl)) {
-            showError("Selected text editorImpl type is unknown: " + editor.getClass().toString());
-            return;
-        }
-
-        EditorImpl editorImpl = (EditorImpl) editor;
-        VirtualFile file = editorImpl.getVirtualFile().getCanonicalFile();
+        VirtualFile file = DataKeys.VIRTUAL_FILE.getData(e.getDataContext());
         assert file != null;
 
         String extension = file.getExtension();
@@ -38,7 +27,7 @@ public class ConvertAction extends AnAction {
             return;
         }
 
-        new ConvertConfigDialog(e.getProject()).show();
+        new ConvertConfigDialog(e).show();
     }
 
     private void showError(String content) {

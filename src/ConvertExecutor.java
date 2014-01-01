@@ -2,10 +2,11 @@ import com.google.common.collect.Lists;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -14,14 +15,14 @@ import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.datatransfer.StringSelection;
+import java.io.Closeable;
 import java.io.IOException;
-import java.io.StringReader;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -134,22 +135,42 @@ public class ConvertExecutor {
         }
     }
 
-    public void execute(Project project, ConvertConfig config) {
-        Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
-        assert editor != null;
+    public static void closeQuietly(Closeable closeable) {
+        try {
+            if (closeable != null) {
+                closeable.close();
+            }
+        } catch (IOException ioe) {
+            // ignore
+        }
+    }
 
-        List<AndroidViewInfo> infos = extractViewInfos(editor.getDocument().getText());
-        Tree viewNameTree = config.useSmartType ? prepareViewNames(project) : null;
+    public void execute(AnActionEvent sourceEvent, ConvertConfig config) {
+        VirtualFile file = DataKeys.VIRTUAL_FILE.getData(sourceEvent.getDataContext());
+        assert file != null;
+
+        List<AndroidViewInfo> infos;
+        InputStream is = null;
+        try {
+            is = file.getInputStream();
+            infos = extractViewInfos(is);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            closeQuietly(is);
+        }
+
+        Tree viewNameTree = config.useSmartType ? prepareViewNames(sourceEvent.getProject()) : null;
         String javaCode = generateJavaCode(infos, viewNameTree, config);
 
         CopyPasteManager.getInstance().setContents(new StringSelection(javaCode));
 
-        Notifications.Bus.notify(new Notification("OffingHarbor", "OffingHarbor", "Code is copied to clipboard", NotificationType.INFORMATION), project);
+        Notifications.Bus.notify(new Notification("OffingHarbor", "OffingHarbor", "Code is copied to clipboard", NotificationType.INFORMATION), sourceEvent.getProject());
     }
 
-    private List<AndroidViewInfo> extractViewInfos(String text) {
+    private List<AndroidViewInfo> extractViewInfos(InputStream is) {
         try {
-            return traverseViewInfos(DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(text))));
+            return traverseViewInfos(DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is));
         } catch (ParserConfigurationException e) {
             throw new RuntimeException(e);
         } catch (SAXException e) {

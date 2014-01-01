@@ -37,6 +37,8 @@
         <action id="ConvertAction" class="ConvertAction" text="Convert Android layout xml"
                 description="Convert Android layout xml to Java code">
             <add-to-group group-id="ToolsMenu" anchor="after" relative-to-action="AndroidToolsGroup"/>
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
+                          relative-to-action="ProjectViewPopupMenuRefactoringGroup"/>
             <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl meta 9"/>
         </action>
     </actions>

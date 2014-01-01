@@ -1,4 +1,4 @@
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.IdeBorderFactory;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +10,7 @@ import java.awt.*;
  * Created by toyama.yosaku on 13/12/30.
  */
 public class ConvertConfigDialog extends DialogWrapper {
-    private Project mProject;
+    private AnActionEvent mSourceEvent;
     private ConvertConfigRepository mRepository;
     //
     private JRadioButton mPrefixAsIsRadioButton;
@@ -20,12 +20,12 @@ public class ConvertConfigDialog extends DialogWrapper {
     private JRadioButton mFormatAndroidAnnotationsRadioButton;
     private JCheckBox mSmartTypeCheckBox;
 
-    public ConvertConfigDialog(@Nullable Project project) {
-        super(project, true);
+    public ConvertConfigDialog(AnActionEvent sourceEvent) {
+        super(sourceEvent.getProject(), true);
 
-        mProject = project;
+        mSourceEvent = sourceEvent;
 
-        mRepository = ConvertConfigRepository.getInstance(project);
+        mRepository = ConvertConfigRepository.getInstance(sourceEvent.getProject());
         assert mRepository != null;
 
         if (mRepository.getState() == null) {
@@ -171,6 +171,6 @@ public class ConvertConfigDialog extends DialogWrapper {
         ConvertConfig config = getConfig();
 
         mRepository.loadState(config);
-        new ConvertExecutor().execute(mProject, config);
+        new ConvertExecutor().execute(mSourceEvent, config);
     }
 }
