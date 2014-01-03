@@ -1,7 +1,7 @@
-- 変換方法
+X 変換方法
     X 現在開いている xml から変換
     X Project Explorer でファイル右クリックから変換
-    - 現在開いている java から変換
+    X 現在開いている java から変換
 - 変換後
     X clipboard にコピー
     - 対応する java を更新
