@@ -15,7 +15,7 @@
     </change-notes>
 
     <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
-    <idea-version since-build="107.105"/>
+    <idea-version since-build="107.105" />
 
     <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
          on how to target different products -->
@@ -33,16 +33,16 @@
 
     <actions>
         <!-- Add your actions here -->
-        <action id="ConvertAction" class="ConvertAction" text="Convert Android layout xml"
-                description="Convert Android layout xml to Java code">
-            <add-to-group group-id="ToolsMenu" anchor="after" relative-to-action="AndroidToolsGroup"/>
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
-                          relative-to-action="ProjectViewPopupMenuRefactoringGroup"/>
-            <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl meta 9"/>
+        <action class="ConvertAction" description="Convert Android layout xml to Java code" id="ConvertAction"
+            text="Convert Android layout xml">
+            <add-to-group anchor="after" group-id="ToolsMenu" relative-to-action="AndroidToolsGroup" />
+            <add-to-group anchor="after" group-id="ProjectViewPopupMenu"
+                relative-to-action="ProjectViewPopupMenuRefactoringGroup" />
+            <keyboard-shortcut first-keystroke="meta alt A" keymap="$default" />
         </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectService serviceImplementation="ConvertConfigRepository" serviceInterface="ConvertConfigRepository"/>
+        <projectService serviceImplementation="ConvertConfigRepository" serviceInterface="ConvertConfigRepository" />
     </extensions>
 </idea-plugin>
