@@ -1,17 +1,16 @@
 <idea-plugin version="2">
-    <id>com.yourcompany.unique.plugin.id</id>
-    <name>Plugin display name here</name>
+    <id>jp.funnything.offing_harbor</id>
+    <name>Android Layout ID Converter</name>
     <version>1.0</version>
-    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+    <vendor email="coding.while.sleep@gmail.com" url="http://flavors.me/funnything">Yosaku Toyama</vendor>
 
     <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <small>most HTML tags may be used</small>
-      ]]></description>
+      This plugin convert IDs in your android layout xml, to java source code.
+      ]]>
+    </description>
 
     <change-notes><![CDATA[
-      Add change notes here.<br>
-      <small>most HTML tags may be used</small>
+      None.
       ]]>
     </change-notes>
 
