@@ -20,6 +20,7 @@ public class ConvertConfigDialog extends DialogWrapper {
     private JRadioButton mPrefixUnderscoreRadioButton;
     private JRadioButton mFormatPlainRadioButton;
     private JRadioButton mFormatAndroidAnnotationsRadioButton;
+    private JRadioButton mFormatButterKnifeRadioButton;
     private JCheckBox mSmartTypeCheckBox;
 
     public ConvertConfigDialog(Project project, VirtualFile layoutFile) {
@@ -74,13 +75,16 @@ public class ConvertConfigDialog extends DialogWrapper {
 
         mFormatPlainRadioButton = new JRadioButton("for plain Android frameworks");
         mFormatAndroidAnnotationsRadioButton = new JRadioButton("for AndroidAnnotations");
+        mFormatButterKnifeRadioButton = new JRadioButton("for ButterKnife");
 
         ButtonGroup formatButtonGroup = new ButtonGroup();
         formatButtonGroup.add(mFormatPlainRadioButton);
         formatButtonGroup.add(mFormatAndroidAnnotationsRadioButton);
+        formatButtonGroup.add(mFormatButterKnifeRadioButton);
 
         formatBox.add(mFormatPlainRadioButton);
         formatBox.add(mFormatAndroidAnnotationsRadioButton);
+        formatBox.add(mFormatButterKnifeRadioButton);
 
         box.add(Box.createHorizontalStrut(5));
         box.add(formatBox);
@@ -149,6 +153,8 @@ public class ConvertConfigDialog extends DialogWrapper {
             return ConvertConfig.ConvertFormat.PLAIN;
         } else if (mFormatAndroidAnnotationsRadioButton.isSelected()) {
             return ConvertConfig.ConvertFormat.ANDROID_ANNOTATIONS;
+        } else if (mFormatButterKnifeRadioButton.isSelected()) {
+            return ConvertConfig.ConvertFormat.BUTTER_KNIFE;
         } else {
             throw new IllegalStateException("assert");
         }
@@ -161,6 +167,9 @@ public class ConvertConfigDialog extends DialogWrapper {
                 break;
             case ANDROID_ANNOTATIONS:
                 mFormatAndroidAnnotationsRadioButton.setSelected(true);
+                break;
+            case BUTTER_KNIFE:
+                mFormatButterKnifeRadioButton.setSelected(true);
                 break;
             default:
                 throw new IllegalStateException("assert");

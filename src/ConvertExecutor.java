@@ -212,6 +212,12 @@ public class ConvertExecutor {
                 } else {
                     fieldJavaCode.append(String.format("@ViewById" + NL + "protected %s %s;" + NL, type, symbol));
                 }
+            } else if (config.format == ConvertConfig.ConvertFormat.BUTTER_KNIFE) {
+                if (config.prefix.willModify()) {
+                    fieldJavaCode.append(String.format("@InjectView(R.id.%s)" + NL + "protected %s %s;" + NL, info.id, type, symbol));
+                } else {
+                    fieldJavaCode.append(String.format("@InjectView" + NL + "protected %s %s;" + NL, type, symbol));
+                }
             } else {
                 fieldJavaCode.append(String.format("private %s %s;" + NL, type, symbol));
             }
@@ -225,7 +231,7 @@ public class ConvertExecutor {
 
         methodJavaCode.append("}" + NL);
 
-        if (config.format == ConvertConfig.ConvertFormat.ANDROID_ANNOTATIONS) {
+        if (config.format != ConvertConfig.ConvertFormat.PLAIN) {
             return fieldJavaCode.toString();
         } else {
             return fieldJavaCode.toString() + NL + methodJavaCode.toString();

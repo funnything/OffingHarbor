@@ -8,7 +8,7 @@ public class ConvertConfig {
     }
 
     public enum ConvertFormat {
-        PLAIN, ANDROID_ANNOTATIONS
+        PLAIN, ANDROID_ANNOTATIONS, BUTTER_KNIFE
     }
 
     public ConvertPrefix prefix;
