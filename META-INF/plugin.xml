@@ -5,7 +5,9 @@
     <vendor email="coding.while.sleep@gmail.com" url="http://flavors.me/funnything">Yosaku Toyama</vendor>
 
     <description><![CDATA[
-      This plugin convert IDs in your android layout xml, to java source code.
+      This plugin convert IDs in your android layout xml, to java source code.<br>
+      See <a href="http://youtu.be/L0KV4n13Gs4">demo movie</a>.<br>
+      Source code is <a href="https://github.com/funnything/OffingHarbor">here</a>.
       ]]>
     </description>
 
