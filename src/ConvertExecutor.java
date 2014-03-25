@@ -213,7 +213,7 @@ public class ConvertExecutor {
                 visibility = "private ";
                 break;
             default:
-                visibility = "protected ";
+                throw new IllegalStateException("assert");
         }
 
         methodJavaCode.append("private void assignViews() {" + NL);
