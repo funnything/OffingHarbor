@@ -1,23 +1,26 @@
 <idea-plugin version="2">
     <id>jp.funnything.offing_harbor</id>
     <name>Android Layout ID Converter</name>
-    <version>1.0</version>
+    <version>1.2</version>
     <vendor email="coding.while.sleep@gmail.com" url="http://flavors.me/funnything">Yosaku Toyama</vendor>
 
     <description><![CDATA[
       This plugin convert IDs in your android layout xml, to java source code.<br>
+      Supported format: Plain Android style, AndroidAnnotations, ButterKnife<br>
       See <a href="http://youtu.be/L0KV4n13Gs4">demo movie</a>.<br>
       Source code is <a href="https://github.com/funnything/OffingHarbor">here</a>.
       ]]>
     </description>
 
     <change-notes><![CDATA[
-      None.
+      1.2: Fix bugs<br>
+      1.1: Add ButterKnife support. Add java visibility support (@zaki50++)<br>
+      1.0: Initial release.<br>
       ]]>
     </change-notes>
 
     <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
-    <idea-version since-build="107.105" />
+    <idea-version since-build="107.105"/>
 
     <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
          on how to target different products -->
@@ -36,15 +39,15 @@
     <actions>
         <!-- Add your actions here -->
         <action class="ConvertAction" description="Convert Android layout xml to Java code" id="ConvertAction"
-            text="Convert Android layout xml">
-            <add-to-group anchor="after" group-id="ToolsMenu" relative-to-action="AndroidToolsGroup" />
+                text="Convert Android layout xml">
+            <add-to-group anchor="after" group-id="ToolsMenu" relative-to-action="AndroidToolsGroup"/>
             <add-to-group anchor="after" group-id="ProjectViewPopupMenu"
-                relative-to-action="ProjectViewPopupMenuRefactoringGroup" />
-            <keyboard-shortcut first-keystroke="meta alt A" keymap="$default" />
+                          relative-to-action="ProjectViewPopupMenuRefactoringGroup"/>
+            <keyboard-shortcut first-keystroke="meta alt A" keymap="$default"/>
         </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectService serviceImplementation="ConvertConfigRepository" serviceInterface="ConvertConfigRepository" />
+        <projectService serviceImplementation="ConvertConfigRepository" serviceInterface="ConvertConfigRepository"/>
     </extensions>
 </idea-plugin>
