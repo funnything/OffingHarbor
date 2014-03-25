@@ -200,6 +200,22 @@ public class ConvertExecutor {
 
         String NL = "\n";
 
+
+        final String visibility;
+        switch (config.visibility) {
+            case PROTECTED:
+                visibility = "protected ";
+                break;
+            case PACKAGE_PRIVATE:
+                visibility = "";
+                break;
+            case PRIVATE:
+                visibility = "private ";
+                break;
+            default:
+                throw new IllegalStateException("assert");
+        }
+
         methodJavaCode.append("private void assignViews() {" + NL);
 
         for (AndroidViewInfo info : infos) {
@@ -208,18 +224,18 @@ public class ConvertExecutor {
 
             if (config.format == ConvertConfig.ConvertFormat.ANDROID_ANNOTATIONS) {
                 if (config.prefix.willModify()) {
-                    fieldJavaCode.append(String.format("@ViewById(R.id.%s)" + NL + "protected %s %s;" + NL, info.id, type, symbol));
+                    fieldJavaCode.append(String.format("@ViewById(R.id.%s)" + NL + "%s%s %s;" + NL, info.id, visibility, type, symbol));
                 } else {
-                    fieldJavaCode.append(String.format("@ViewById" + NL + "protected %s %s;" + NL, type, symbol));
+                    fieldJavaCode.append(String.format("@ViewById" + NL + "%s%s %s;" + NL, visibility, type, symbol));
                 }
             } else if (config.format == ConvertConfig.ConvertFormat.BUTTER_KNIFE) {
                 if (config.prefix.willModify()) {
-                    fieldJavaCode.append(String.format("@InjectView(R.id.%s)" + NL + "protected %s %s;" + NL, info.id, type, symbol));
+                    fieldJavaCode.append(String.format("@InjectView(R.id.%s)" + NL + "%s%s %s;" + NL, info.id, visibility, type, symbol));
                 } else {
-                    fieldJavaCode.append(String.format("@InjectView" + NL + "protected %s %s;" + NL, type, symbol));
+                    fieldJavaCode.append(String.format("@InjectView" + NL + "%s%s %s;" + NL, visibility, type, symbol));
                 }
             } else {
-                fieldJavaCode.append(String.format("private %s %s;" + NL, type, symbol));
+                fieldJavaCode.append(String.format("%s%s %s;" + NL, visibility, type, symbol));
             }
 
             if (type.equals("View")) {

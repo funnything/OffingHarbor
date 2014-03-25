@@ -6,6 +6,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Created by toyama.yosaku on 13/12/30.
@@ -21,6 +23,9 @@ public class ConvertConfigDialog extends DialogWrapper {
     private JRadioButton mFormatPlainRadioButton;
     private JRadioButton mFormatAndroidAnnotationsRadioButton;
     private JRadioButton mFormatButterKnifeRadioButton;
+    private JRadioButton mVisibilityPrivate;
+    private JRadioButton mVisibilityPackagePrivate;
+    private JRadioButton mVisibilityProtected;
     private JCheckBox mSmartTypeCheckBox;
 
     public ConvertConfigDialog(Project project, VirtualFile layoutFile) {
@@ -77,6 +82,22 @@ public class ConvertConfigDialog extends DialogWrapper {
         mFormatAndroidAnnotationsRadioButton = new JRadioButton("for AndroidAnnotations");
         mFormatButterKnifeRadioButton = new JRadioButton("for ButterKnife");
 
+        ActionListener formatChangeListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (actionEvent.getSource() == mFormatPlainRadioButton) {
+                    applyVisibilityConstraint(ConvertConfig.ConvertFormat.PLAIN);
+                } else if (actionEvent.getSource() == mFormatAndroidAnnotationsRadioButton) {
+                    applyVisibilityConstraint(ConvertConfig.ConvertFormat.ANDROID_ANNOTATIONS);
+                } else if (actionEvent.getSource() == mFormatButterKnifeRadioButton) {
+                    applyVisibilityConstraint(ConvertConfig.ConvertFormat.BUTTER_KNIFE);
+                }
+            }
+        };
+        mFormatPlainRadioButton.addActionListener(formatChangeListener);
+        mFormatAndroidAnnotationsRadioButton.addActionListener(formatChangeListener);
+        mFormatButterKnifeRadioButton.addActionListener(formatChangeListener);
+
         ButtonGroup formatButtonGroup = new ButtonGroup();
         formatButtonGroup.add(mFormatPlainRadioButton);
         formatButtonGroup.add(mFormatAndroidAnnotationsRadioButton);
@@ -88,6 +109,27 @@ public class ConvertConfigDialog extends DialogWrapper {
 
         box.add(Box.createHorizontalStrut(5));
         box.add(formatBox);
+
+        // create visibility
+
+        Box visibilityBox = Box.createVerticalBox();
+        visibilityBox.setAlignmentY(Component.TOP_ALIGNMENT);
+        visibilityBox.setBorder(IdeBorderFactory.createTitledBorder("Variable Visibility", true));
+
+        mVisibilityPrivate = new JRadioButton("private");
+        mVisibilityPackagePrivate = new JRadioButton("package private");
+        mVisibilityProtected = new JRadioButton("protected");
+
+        ButtonGroup visibilityButtonGroup = new ButtonGroup();
+        visibilityButtonGroup.add(mVisibilityPrivate);
+        visibilityButtonGroup.add(mVisibilityPackagePrivate);
+        visibilityButtonGroup.add(mVisibilityProtected);
+
+        visibilityBox.add(mVisibilityPrivate);
+        visibilityBox.add(mVisibilityPackagePrivate);
+        visibilityBox.add(mVisibilityProtected);
+
+        box.add(visibilityBox);
 
         // create smart-type
 
@@ -110,6 +152,7 @@ public class ConvertConfigDialog extends DialogWrapper {
         ConvertConfig config = new ConvertConfig();
         config.prefix = getPrefix();
         config.format = getFormat();
+        config.visibility = getVisibility();
         config.useSmartType = mSmartTypeCheckBox.isSelected();
         return config;
     }
@@ -117,7 +160,10 @@ public class ConvertConfigDialog extends DialogWrapper {
     private void setConfig(ConvertConfig config) {
         setPrefix(config.prefix);
         setFormat(config.format);
+        setVisibility(config.visibility);
         mSmartTypeCheckBox.setSelected(config.useSmartType);
+
+        applyVisibilityConstraint(config.format);
     }
 
     private ConvertConfig.ConvertPrefix getPrefix() {
@@ -170,6 +216,58 @@ public class ConvertConfigDialog extends DialogWrapper {
                 break;
             case BUTTER_KNIFE:
                 mFormatButterKnifeRadioButton.setSelected(true);
+                break;
+            default:
+                throw new IllegalStateException("assert");
+        }
+    }
+
+    private void applyVisibilityConstraint(ConvertConfig.ConvertFormat format) {
+        switch (format) {
+            case PLAIN:
+                mVisibilityPrivate.setEnabled(true);
+                mVisibilityPackagePrivate.setEnabled(true);
+                mVisibilityProtected.setEnabled(true);
+                break;
+            case ANDROID_ANNOTATIONS:
+                /* fall through */
+            case BUTTER_KNIFE:
+                mVisibilityPrivate.setEnabled(false);
+                mVisibilityPackagePrivate.setEnabled(true);
+                mVisibilityProtected.setEnabled(true);
+
+                // PLAIN でない時に許される可視性は private 以外
+                if (getVisibility() == ConvertConfig.Visibility.PRIVATE) {
+                    setVisibility(ConvertConfig.Visibility.PACKAGE_PRIVATE);
+                }
+                break;
+            default:
+                throw new IllegalStateException("assert");
+        }
+    }
+
+    private ConvertConfig.Visibility getVisibility() {
+        if (mVisibilityPrivate.isSelected()) {
+            return ConvertConfig.Visibility.PRIVATE;
+        } else if (mVisibilityPackagePrivate.isSelected()) {
+            return ConvertConfig.Visibility.PACKAGE_PRIVATE;
+        } else if (mVisibilityProtected.isSelected()) {
+            return ConvertConfig.Visibility.PROTECTED;
+        } else {
+            throw new IllegalStateException("assert");
+        }
+    }
+
+    private void setVisibility(ConvertConfig.Visibility visibility) {
+        switch (visibility) {
+            case PRIVATE:
+                mVisibilityPrivate.setSelected(true);
+                break;
+            case PACKAGE_PRIVATE:
+                mVisibilityPackagePrivate.setSelected(true);
+                break;
+            case PROTECTED:
+                mVisibilityProtected.setSelected(true);
                 break;
             default:
                 throw new IllegalStateException("assert");
