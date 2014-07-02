@@ -8,7 +8,11 @@ public class ConvertConfig {
     }
 
     public enum ConvertFormat {
-        PLAIN, ANDROID_ANNOTATIONS, BUTTER_KNIFE
+        PLAIN, ANDROID_ANNOTATIONS, BUTTER_KNIFE;
+
+        public boolean requireAssignMethod() {
+            return this == PLAIN;
+        }
     }
 
     public enum Visibility {

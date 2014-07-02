@@ -229,11 +229,8 @@ public class ConvertExecutor {
                     fieldJavaCode.append(String.format("@ViewById" + NL + "%s%s %s;" + NL, visibility, type, symbol));
                 }
             } else if (config.format == ConvertConfig.ConvertFormat.BUTTER_KNIFE) {
-                if (config.prefix.willModify()) {
-                    fieldJavaCode.append(String.format("@InjectView(R.id.%s)" + NL + "%s%s %s;" + NL, info.id, visibility, type, symbol));
-                } else {
-                    fieldJavaCode.append(String.format("@InjectView" + NL + "%s%s %s;" + NL, visibility, type, symbol));
-                }
+                // Butter Knife always requires resource-id
+                fieldJavaCode.append(String.format("@InjectView(R.id.%s)" + NL + "%s%s %s;" + NL, info.id, visibility, type, symbol));
             } else {
                 fieldJavaCode.append(String.format("%s%s %s;" + NL, visibility, type, symbol));
             }
@@ -247,10 +244,10 @@ public class ConvertExecutor {
 
         methodJavaCode.append("}" + NL);
 
-        if (config.format != ConvertConfig.ConvertFormat.PLAIN) {
-            return fieldJavaCode.toString();
-        } else {
+        if (config.format.requireAssignMethod()) {
             return fieldJavaCode.toString() + NL + methodJavaCode.toString();
+        } else {
+            return fieldJavaCode.toString();
         }
     }
 

@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>jp.funnything.offing_harbor</id>
     <name>Android Layout ID Converter</name>
-    <version>1.2</version>
+    <version>1.3</version>
     <vendor email="coding.while.sleep@gmail.com" url="http://flavors.me/funnything">Yosaku Toyama</vendor>
 
     <description><![CDATA[
@@ -13,8 +13,9 @@
     </description>
 
     <change-notes><![CDATA[
-      1.2: Fix bugs<br>
-      1.1: Add ButterKnife support. Add java visibility support (@zaki50++)<br>
+      1.3: Always specify resource id if ButterKnife selected.<br>
+      1.2: Fix bugs.<br>
+      1.1: Add ButterKnife support. Add java visibility support. (@zaki50++)<br>
       1.0: Initial release.<br>
       ]]>
     </change-notes>

@@ -94,6 +94,7 @@ public class ConvertConfigDialog extends DialogWrapper {
                 }
             }
         };
+
         mFormatPlainRadioButton.addActionListener(formatChangeListener);
         mFormatAndroidAnnotationsRadioButton.addActionListener(formatChangeListener);
         mFormatButterKnifeRadioButton.addActionListener(formatChangeListener);
