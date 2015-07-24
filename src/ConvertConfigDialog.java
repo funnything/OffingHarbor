@@ -27,6 +27,7 @@ public class ConvertConfigDialog extends DialogWrapper {
     private JRadioButton mVisibilityPackagePrivate;
     private JRadioButton mVisibilityProtected;
     private JCheckBox mSmartTypeCheckBox;
+    private JCheckBox mIncludeNodeCheckBox;
 
     public ConvertConfigDialog(Project project, VirtualFile layoutFile) {
         super(project, true);
@@ -141,6 +142,10 @@ public class ConvertConfigDialog extends DialogWrapper {
         mSmartTypeCheckBox = new JCheckBox("Detect Type by ID");
         smartTypeBox.add(mSmartTypeCheckBox);
 
+        mIncludeNodeCheckBox = new JCheckBox("Detect 'include' tag");
+        mIncludeNodeCheckBox.setSelected(true);
+        smartTypeBox.add(mIncludeNodeCheckBox);
+
         box.add(Box.createHorizontalStrut(5));
         box.add(smartTypeBox);
 
@@ -155,6 +160,7 @@ public class ConvertConfigDialog extends DialogWrapper {
         config.format = getFormat();
         config.visibility = getVisibility();
         config.useSmartType = mSmartTypeCheckBox.isSelected();
+        config.detectIncludeNode = mIncludeNodeCheckBox.isSelected();
         return config;
     }
 
