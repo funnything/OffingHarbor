@@ -23,6 +23,7 @@ public class ConvertConfig {
     public ConvertFormat format;
     public Visibility visibility;
     public boolean useSmartType;
+    public boolean detectIncludeNode;
 
     public ConvertConfig() {
         // default values
@@ -31,6 +32,7 @@ public class ConvertConfig {
         format = ConvertFormat.PLAIN;
         visibility = Visibility.PRIVATE;
         useSmartType = false;
+        detectIncludeNode = true;
     }
 }
 

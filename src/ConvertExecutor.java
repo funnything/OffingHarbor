@@ -16,6 +16,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.help.search.ConfigFile;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.datatransfer.StringSelection;
@@ -133,17 +134,14 @@ public class ConvertExecutor {
         }
     }
 
+    private ConvertConfig mConfig;
+    private Project mProject;
+
     public void execute(Project project, VirtualFile file, ConvertConfig config) {
         List<AndroidViewInfo> infos;
-        InputStream is = null;
-        try {
-            is = file.getInputStream();
-            infos = extractViewInfos(is);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            Util.closeQuietly(is);
-        }
+        mProject = project;
+        mConfig = config;
+        infos = extractViewInfos(file);
 
         Tree viewNameTree = config.useSmartType ? prepareViewNames(project) : null;
         String javaCode = generateJavaCode(infos, viewNameTree, config);
@@ -154,41 +152,64 @@ public class ConvertExecutor {
         Notifications.Bus.notify(new Notification("OffingHarbor", "OffingHarbor", "Code is copied to clipboard", NotificationType.INFORMATION), project);
     }
 
-    private List<AndroidViewInfo> extractViewInfos(InputStream is) {
+    private List<AndroidViewInfo> extractViewInfos(VirtualFile file) {
+        List<AndroidViewInfo> infos;
+        InputStream is = null;
+
         try {
-            return traverseViewInfos(DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is));
+            is = file.getInputStream();
+            return traverseViewInfos(file ,DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is));
         } catch (ParserConfigurationException e) {
             throw new RuntimeException(e);
         } catch (SAXException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            Util.closeQuietly(is);
         }
     }
 
-    private List<AndroidViewInfo> traverseViewInfos(Node node) {
+    private List<AndroidViewInfo> traverseViewInfos(VirtualFile file, Node node) {
         List<AndroidViewInfo> infos = Lists.newArrayList();
 
         if (node.getNodeType() == Node.ELEMENT_NODE) {
-            Node idNode = node.getAttributes().getNamedItem("android:id");
+            String[] elements = node.getNodeName().split("\\.");
+            String type = elements[elements.length-1];
 
-            if (idNode != null) {
-                String value = idNode.getNodeValue();
-                String[] values = value.split("/");
+            if ("include".equals(type) && mConfig.detectIncludeNode) {
+                Node layoutNode = node.getAttributes().getNamedItem("layout");
+                if(layoutNode != null){
+                    String value = layoutNode.getNodeValue();
+                    String[] values = value.split("/");
 
-                if (values.length != 2) {
-                    throw new IllegalStateException("android:id value is invalid");
+                    if (values.length != 2) {
+                        throw new IllegalStateException("layout value is invalid");
+                    }
+                    VirtualFile layoutFile = ConvertUtils.traverseLayoutFileByName(values[1], mProject.getBaseDir(), file, null);
+                    if (layoutFile != null) {
+                        infos.addAll(extractViewInfos(layoutFile));
+                    }
                 }
+            } else {
+                Node idNode = node.getAttributes().getNamedItem("android:id");
 
-                String[] elements = node.getNodeName().split("\\.");
+                if (idNode != null) {
+                    String value = idNode.getNodeValue();
+                    String[] values = value.split("/");
 
-                infos.add(new AndroidViewInfo(elements[elements.length - 1], values[1]));
+                    if (values.length != 2) {
+                        throw new IllegalStateException("android:id value is invalid");
+                    }
+
+                    infos.add(new AndroidViewInfo(elements[elements.length - 1], values[1]));
+                }
             }
         }
 
         NodeList children = node.getChildNodes();
         for (int index = 0; index < children.getLength(); index++) {
-            infos.addAll(traverseViewInfos(children.item(index)));
+            infos.addAll(traverseViewInfos(file, children.item(index)));
         }
 
         return infos;
