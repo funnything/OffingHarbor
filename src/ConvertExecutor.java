@@ -1,3 +1,4 @@
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -79,11 +80,11 @@ public class ConvertExecutor {
 
         private boolean traverseOptimalType(Tree viewNamesTree, String candidate, String origin, boolean searchForOrigin) {
             if (searchForOrigin) {
-                if (viewNamesTree.name.equals(origin)) {
+                if (Objects.equal(viewNamesTree.name, origin)) {
                     return true;
                 }
             } else {
-                if (viewNamesTree.name.equals(candidate)) {
+                if (Objects.equal(viewNamesTree.name, candidate)) {
                     return traverseOptimalType(viewNamesTree, candidate, origin, true);
                 }
             }
