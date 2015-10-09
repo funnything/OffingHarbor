@@ -5,7 +5,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.apache.commons.net.io.Util;
+import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -72,7 +72,7 @@ public class ConvertAction extends AnAction {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
-            Util.closeQuietly(reader);
+            IOUtils.closeQuietly(reader);
         }
     }
 

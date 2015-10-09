@@ -12,7 +12,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.net.io.Util;
+import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -143,7 +143,7 @@ public class ConvertExecutor {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
-            Util.closeQuietly(is);
+            IOUtils.closeQuietly(is);
         }
 
         Tree viewNameTree = config.useSmartType ? prepareViewNames(project) : null;
