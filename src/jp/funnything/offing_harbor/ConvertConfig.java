@@ -1,3 +1,5 @@
+package jp.funnything.offing_harbor;
+
 public class ConvertConfig {
     public enum ConvertPrefix {
         NONE, MEMBER, UNDERSCORE;

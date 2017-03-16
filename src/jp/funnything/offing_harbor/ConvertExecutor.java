@@ -1,3 +1,5 @@
+package jp.funnything.offing_harbor;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.intellij.notification.Notification;

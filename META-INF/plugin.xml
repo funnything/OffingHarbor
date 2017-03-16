@@ -41,7 +41,7 @@
 
     <actions>
         <!-- Add your actions here -->
-        <action class="ConvertAction" description="Convert Android layout xml to Java code" id="ConvertAction"
+        <action class="jp.funnything.offing_harbor.ConvertAction" description="Convert Android layout xml to Java code" id="ConvertAction"
                 text="Convert Android layout xml">
             <add-to-group anchor="after" group-id="ToolsMenu" relative-to-action="AndroidToolsGroup"/>
             <add-to-group anchor="after" group-id="ProjectViewPopupMenu"
@@ -51,6 +51,6 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectService serviceImplementation="ConvertConfigRepository" serviceInterface="ConvertConfigRepository"/>
+        <projectService serviceImplementation="jp.funnything.offing_harbor.ConvertConfigRepository" serviceInterface="jp.funnything.offing_harbor.ConvertConfigRepository"/>
     </extensions>
 </idea-plugin>
