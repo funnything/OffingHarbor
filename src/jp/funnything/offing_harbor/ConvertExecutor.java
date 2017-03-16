@@ -233,7 +233,7 @@ public class ConvertExecutor {
                 }
             } else if (config.format == ConvertConfig.ConvertFormat.BUTTER_KNIFE) {
                 // Butter Knife always requires resource-id
-                fieldJavaCode.append(String.format("@InjectView(R.id.%s)" + NL + "%s%s %s;" + NL, info.id, visibility, type, symbol));
+                fieldJavaCode.append(String.format("@BindView(R.id.%s)" + NL + "%s%s %s;" + NL, info.id, visibility, type, symbol));
             } else {
                 fieldJavaCode.append(String.format("%s%s %s;" + NL, visibility, type, symbol));
             }
