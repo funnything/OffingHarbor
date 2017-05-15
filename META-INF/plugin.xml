@@ -13,6 +13,7 @@
     </description>
 
     <change-notes><![CDATA[
+      1.7: Add Kotlin support<br>
       1.6: Fix NPE on Android Studio 2.3 / Update ButterKnife annotation<br>
       1.5: Use JDK 1.6 for build.<br>
       1.4: Quick-fix for NullPointerException.<br>
