@@ -14,7 +14,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -145,7 +144,7 @@ public class ConvertExecutor {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
-            IOUtils.closeQuietly(is);
+            closeQuietly(is);
         }
 
         Tree viewNameTree = config.useSmartType ? prepareViewNames(project) : null;
@@ -155,6 +154,16 @@ public class ConvertExecutor {
 
         // add layout file name to message
         Notifications.Bus.notify(new Notification("OffingHarbor", "OffingHarbor", "Code is copied to clipboard", NotificationType.INFORMATION), project);
+    }
+
+    private static void closeQuietly(InputStream input) {
+        try {
+            if (input != null) {
+                input.close();
+            }
+        } catch (IOException ioe) {
+            // ignore
+        }
     }
 
     private List<AndroidViewInfo> extractViewInfos(InputStream is) {
@@ -219,7 +228,11 @@ public class ConvertExecutor {
                 throw new IllegalStateException("assert");
         }
 
-        methodJavaCode.append("private void assignViews() {" + NL);
+        if (config.format == ConvertConfig.ConvertFormat.KOTLIN) {
+            methodJavaCode.append("private fun assignViews() {" + NL);
+        } else {
+            methodJavaCode.append("private void assignViews() {" + NL);
+        }
 
         for (AndroidViewInfo info : infos) {
             String type = config.useSmartType ? info.findOptimalType(viewNameTree) : info.type;
@@ -234,14 +247,24 @@ public class ConvertExecutor {
             } else if (config.format == ConvertConfig.ConvertFormat.BUTTER_KNIFE) {
                 // Butter Knife always requires resource-id
                 fieldJavaCode.append(String.format("@BindView(R.id.%s)" + NL + "%s%s %s;" + NL, info.id, visibility, type, symbol));
+            } else if (config.format == ConvertConfig.ConvertFormat.KOTLIN) {
+                fieldJavaCode.append(String.format("%slateinit var %s: %s" + NL, visibility, symbol, type));
             } else {
                 fieldJavaCode.append(String.format("%s%s %s;" + NL, visibility, type, symbol));
             }
 
-            if (type.equals("View")) {
-                methodJavaCode.append(String.format("    %s = findViewById(R.id.%s);" + NL, symbol, info.id));
+            if (config.format == ConvertConfig.ConvertFormat.KOTLIN) {
+                if (type.equals("View")) {
+                    methodJavaCode.append(String.format("    %s = findViewById(R.id.%s)" + NL, symbol, info.id));
+                } else {
+                    methodJavaCode.append(String.format("    %s = findViewById(R.id.%s) as %s" + NL, symbol, info.id, type));
+                }
             } else {
-                methodJavaCode.append(String.format("    %s = (%s) findViewById(R.id.%s);" + NL, symbol, type, info.id));
+                if (type.equals("View")) {
+                    methodJavaCode.append(String.format("    %s = findViewById(R.id.%s);" + NL, symbol, info.id));
+                } else {
+                    methodJavaCode.append(String.format("    %s = (%s) findViewById(R.id.%s);" + NL, symbol, type, info.id));
+                }
             }
         }
 

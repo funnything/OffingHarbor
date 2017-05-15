@@ -25,6 +25,7 @@ public class ConvertConfigDialog extends DialogWrapper {
     private JRadioButton mFormatPlainRadioButton;
     private JRadioButton mFormatAndroidAnnotationsRadioButton;
     private JRadioButton mFormatButterKnifeRadioButton;
+    private JRadioButton mFormatKotlinRadioButton;
     private JRadioButton mVisibilityPrivate;
     private JRadioButton mVisibilityPackagePrivate;
     private JRadioButton mVisibilityProtected;
@@ -83,6 +84,7 @@ public class ConvertConfigDialog extends DialogWrapper {
         mFormatPlainRadioButton = new JRadioButton("for plain Android frameworks");
         mFormatAndroidAnnotationsRadioButton = new JRadioButton("for AndroidAnnotations");
         mFormatButterKnifeRadioButton = new JRadioButton("for ButterKnife");
+        mFormatKotlinRadioButton = new JRadioButton("for Kotlin");
 
         ActionListener formatChangeListener = new ActionListener() {
             @Override
@@ -93,6 +95,8 @@ public class ConvertConfigDialog extends DialogWrapper {
                     applyVisibilityConstraint(ConvertConfig.ConvertFormat.ANDROID_ANNOTATIONS);
                 } else if (actionEvent.getSource() == mFormatButterKnifeRadioButton) {
                     applyVisibilityConstraint(ConvertConfig.ConvertFormat.BUTTER_KNIFE);
+                } else if (actionEvent.getSource() == mFormatKotlinRadioButton) {
+                    applyVisibilityConstraint(ConvertConfig.ConvertFormat.KOTLIN);
                 }
             }
         };
@@ -100,15 +104,18 @@ public class ConvertConfigDialog extends DialogWrapper {
         mFormatPlainRadioButton.addActionListener(formatChangeListener);
         mFormatAndroidAnnotationsRadioButton.addActionListener(formatChangeListener);
         mFormatButterKnifeRadioButton.addActionListener(formatChangeListener);
+        mFormatKotlinRadioButton.addActionListener(formatChangeListener);
 
         ButtonGroup formatButtonGroup = new ButtonGroup();
         formatButtonGroup.add(mFormatPlainRadioButton);
         formatButtonGroup.add(mFormatAndroidAnnotationsRadioButton);
         formatButtonGroup.add(mFormatButterKnifeRadioButton);
+        formatButtonGroup.add(mFormatKotlinRadioButton);
 
         formatBox.add(mFormatPlainRadioButton);
         formatBox.add(mFormatAndroidAnnotationsRadioButton);
         formatBox.add(mFormatButterKnifeRadioButton);
+        formatBox.add(mFormatKotlinRadioButton);
 
         box.add(Box.createHorizontalStrut(5));
         box.add(formatBox);
@@ -204,6 +211,8 @@ public class ConvertConfigDialog extends DialogWrapper {
             return ConvertConfig.ConvertFormat.ANDROID_ANNOTATIONS;
         } else if (mFormatButterKnifeRadioButton.isSelected()) {
             return ConvertConfig.ConvertFormat.BUTTER_KNIFE;
+        } else if (mFormatKotlinRadioButton.isSelected()) {
+            return ConvertConfig.ConvertFormat.KOTLIN;
         } else {
             throw new IllegalStateException("assert");
         }
@@ -220,6 +229,9 @@ public class ConvertConfigDialog extends DialogWrapper {
             case BUTTER_KNIFE:
                 mFormatButterKnifeRadioButton.setSelected(true);
                 break;
+            case KOTLIN:
+                mFormatKotlinRadioButton.setSelected(true);
+                break;
             default:
                 throw new IllegalStateException("assert");
         }
@@ -228,6 +240,7 @@ public class ConvertConfigDialog extends DialogWrapper {
     private void applyVisibilityConstraint(ConvertConfig.ConvertFormat format) {
         switch (format) {
             case PLAIN:
+            case KOTLIN:
                 mVisibilityPrivate.setEnabled(true);
                 mVisibilityPackagePrivate.setEnabled(true);
                 mVisibilityProtected.setEnabled(true);

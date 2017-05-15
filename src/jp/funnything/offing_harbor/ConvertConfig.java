@@ -10,10 +10,10 @@ public class ConvertConfig {
     }
 
     public enum ConvertFormat {
-        PLAIN, ANDROID_ANNOTATIONS, BUTTER_KNIFE;
+        PLAIN, ANDROID_ANNOTATIONS, BUTTER_KNIFE, KOTLIN;
 
         public boolean requireAssignMethod() {
-            return this == PLAIN;
+            return this == PLAIN || this == KOTLIN;
         }
     }
 
@@ -35,4 +35,3 @@ public class ConvertConfig {
         useSmartType = false;
     }
 }
-
